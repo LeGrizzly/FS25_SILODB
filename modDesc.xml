@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<modDesc descVersion="106">
+    <author>LeGrizzly</author>
+    <version>0.2.0-build-1</version>
+    <title>
+        <en><![CDATA[Database Test]]></en>
+        <fr><![CDATA[Test Database]]></fr>
+    </title>
+    <description>
+        <en><![CDATA[This mod is a test for database functionality in Farming Simulator 25.]]></en>
+        <fr><![CDATA[Ce mod est un test pour la fonctionnalité de base de données dans Farming Simulator 25.]]></fr>
+    </description>
+    <iconFilename>images/icon_dbtest.dds</iconFilename>
+    <multiplayer supported="true" />
+    <extraSourceFiles>
+        <sourceFile filename="scripts/main.lua" />
+    </extraSourceFiles>
+</modDesc>
