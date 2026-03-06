@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<modDesc descVersion="106">
+    <author>LeGrizzly</author>
+    <version>1.0.0.0</version>
+    <title>
+        <en>DBAPI Example Mod</en>
+        <fr>Exemple Mod DBAPI</fr>
+    </title>
+    <description>
+        <en>Demonstrates how to use the FS25_DBAPI centralized database.</en>
+        <fr>Démontre comment utiliser la base de données centralisée FS25_DBAPI.</fr>
+    </description>
+    <iconFilename>icon_mod.dds</iconFilename>
+    <multiplayer supported="true" />
+    
+    <dependencies>
+        <dependency>FS25_DBAPI</dependency>
+    </dependencies>
+
+    <extraSourceFiles>
+        <sourceFile filename="scripts/ExampleDbUsage.lua" />
+    </extraSourceFiles>
+</modDesc>
