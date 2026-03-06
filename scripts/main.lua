@@ -1,89 +1,137 @@
--- FS25_DBTest - Main Entry Point
+-- FS25_DBAPI - Centralized Database Manager
+-- Main entry point and Dependency Injection container.
 
-local DBTest = {}
-DBTest.name = g_currentModName
-DBTest.directory = g_currentModDirectory
-_G.DBTest = DBTest
+local MOD_NAME = g_currentModName
+local MOD_DIR = g_currentModDirectory
 
--- Shared table for modules
-DBTest.modules = {}
+-- Ensure MOD_DIR ends with a slash for robust path concatenation
+if MOD_DIR ~= nil and not MOD_DIR:find("/$") and not MOD_DIR:find("\\$") then
+    MOD_DIR = MOD_DIR .. "/"
+end
 
--- Function to safely source a file
+-- Temporary loader to avoid exposing internal structure early
+_G.DBAPI_LOADER = {
+    _temp = nil
+}
+
+-- Internal storage for modules (private to this file)
+local modules = {}
+
+--- Safely loads a Lua module from the mod directory.
+--- @param name string Module identifier
+--- @param path string Relative path from mod root
+--- @return any|nil module The loaded module or nil on failure
 local function loadModule(name, path)
-    local fullPath = DBTest.directory .. path
-    if fileExists(fullPath) then
-        local result = source(fullPath)
-        if result ~= nil then
-            DBTest.modules[name] = result
-            return result
-        end
-        if DBTest.modules[name] ~= nil then
-            return DBTest.modules[name]
-        end
-        return nil
-    else
-        print(string.format("DBTest Error: Could not find file %s", fullPath))
+    local fullPath = MOD_DIR .. path
+    if not fileExists(fullPath) then
+        print(string.format("DBAPI Error: File not found: %s", fullPath))
         return nil
     end
+
+    _G.DBAPI_LOADER._temp = nil
+    local result = source(fullPath)
+    
+    -- Si source() retourne nil (typique FS25), on récupère ce que le module a déposé dans _temp
+    if result == nil then
+        result = _G.DBAPI_LOADER._temp
+    end
+    
+    if result ~= nil then
+        modules[name] = result
+        _G.DBAPI_LOADER._temp = nil -- Nettoyage après chaque chargement
+        return result
+    end
+
+    print(string.format("DBAPI Warning: Module '%s' returned nil", name))
+    return nil
 end
 
--- Load all components in order
-loadModule("json", "scripts/utils/json.lua")
-loadModule("config", "scripts/config.lua")
-loadModule("flatdb", "scripts/infrastructre/flatdb.lua")
-loadModule("adapter", "scripts/persistence/flatdb_adapter.lua")
-loadModule("setUsecase", "scripts/usecases/setValue.lua")
-loadModule("getUsecase", "scripts/usecases/getValue.lua")
-loadModule("console", "scripts/interfaces/console.lua")
+-- =============================================================================
+-- Phase 1: Load modules
+-- =============================================================================
 
---- Called when the mod map is loaded
-function DBTest:loadMap(filename)
-    -- Database initialization (FileSystem is ready here)
+local json             = loadModule("json",          "scripts/utils/json.lua")
+local FlatDB           = loadModule("flatdb",        "scripts/infrastructure/FlatDB.lua")
+local DatabaseAdapter  = loadModule("adapter",       "scripts/persistence/DatabaseAdapter.lua")
+local SetValue         = loadModule("setValue",       "scripts/usecases/SetValue.lua")
+local GetValue         = loadModule("getValue",       "scripts/usecases/GetValue.lua")
+local DeleteValue      = loadModule("deleteValue",    "scripts/usecases/DeleteValue.lua")
+local ListKeys         = loadModule("listKeys",       "scripts/usecases/ListKeys.lua")
+local ConsoleInterface = loadModule("console",      "scripts/interfaces/ConsoleInterface.lua")
+local buildGlobalAPI   = loadModule("globalAPI",     "scripts/interfaces/GlobalAPI.lua")
+
+-- Nettoyage du loader temporaire
+_G.DBAPI_LOADER = nil
+
+-- Link JSON to FlatDB
+if FlatDB and json then
+    FlatDB.linkJSON(json)
+end
+
+-- =============================================================================
+-- Dependency bundle
+-- =============================================================================
+
+local deps = {
+    adapter     = DatabaseAdapter,
+    setValue     = SetValue,
+    getValue     = GetValue,
+    deleteValue  = DeleteValue,
+    listKeys     = ListKeys,
+    json         = json,
+}
+
+-- =============================================================================
+-- Final Global Exposure
+-- =============================================================================
+
+-- Global table for cross-mod access
+if _G.g_globalMods == nil then
+    _G.g_globalMods = {}
+end
+
+-- Build public API
+local publicAPI = nil
+if buildGlobalAPI then
+    publicAPI = buildGlobalAPI(deps)
+end
+
+-- Expose via g_globalMods["FS25_DBAPI"] as requested
+if publicAPI then
+    _G.g_globalMods["FS25_DBAPI"] = publicAPI
+    print("DBAPI: Public API exposed via g_globalMods['FS25_DBAPI']")
+else
+    print("DBAPI Error: Failed to build public API")
+end
+
+-- =============================================================================
+-- Mod Event Listener
+-- =============================================================================
+
+local DBAPI_Listener = {}
+DBAPI_Listener.name = MOD_NAME
+DBAPI_Listener.directory = MOD_DIR
+
+function DBAPI_Listener:loadMap(filename)
     local savegameDir = g_currentMission.missionInfo.savegameDirectory
-    local dbPath = savegameDir and (savegameDir .. "/dbtest_data") or "modSaveData_DBTest"
-    
-    local adapter = DBTest.modules.adapter
-    if adapter and adapter.init then
-        adapter.init(dbPath)
-    end
-    
-    print("DBTest: Filesystem and Database layer initialized")
-end
+    local dbPath = savegameDir and (savegameDir .. "/DBAPI_data") or "modSaveData_DBAPI"
 
---- Custom function called via Mission00 hook
-function DBTest:onLoadMapFinished()
-    local adapter = DBTest.modules.adapter
-    local console = DBTest.modules.console
+    if DatabaseAdapter and FlatDB then
+        DatabaseAdapter.init(FlatDB, dbPath)
+    end
+    print("DBAPI: Database layer initialized")
     
-    if console and console.register then
-        -- Now g_commandManager is guaranteed to be ready
-        console.register(
-            adapter, 
-            DBTest.modules.setUsecase, 
-            DBTest.modules.getUsecase
-        )
-        print("DBTest: Console Commands and UI layer initialized")
-    else
-        print("DBTest Error: Console module or register function not found")
+    -- Register console commands here to ensure dependencies are initialized
+    if ConsoleInterface then
+        ConsoleInterface.register(deps)
     end
 end
 
-function DBTest:deleteMap()
-    local adapter = DBTest.modules.adapter
-    if adapter and adapter.save then
-        adapter.save()
+function DBAPI_Listener:deleteMap()
+    if DatabaseAdapter then
+        DatabaseAdapter.save()
     end
 end
 
--- HOOK: Force the call to onLoadMapFinished when the mission is ready
--- This is the most reliable way in FS25 to get a "Load Finished" event
-Mission00.loadMapFinished = Utils.appendedFunction(Mission00.loadMapFinished, function(mission, node, ...)
-    if DBTest and DBTest.onLoadMapFinished then
-        DBTest:onLoadMapFinished()
-    end
-end)
-
--- Register for standard events (loadMap, deleteMap)
-addModEventListener(DBTest)
-
-print("DBTest: Mod loaded and mission hooks installed")
+addModEventListener(DBAPI_Listener)
+print("DBAPI: Mod loaded (v1.0.0)")
