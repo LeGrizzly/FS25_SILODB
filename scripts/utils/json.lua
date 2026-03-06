@@ -386,4 +386,5 @@ function json.decode(str)
 end
 
 
+if _G.DBAPI_LOADER then _G.DBAPI_LOADER._temp = json end
 return json
