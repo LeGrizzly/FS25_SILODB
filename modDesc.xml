@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="106">
     <author>LeGrizzly</author>
-    <version>0.2.0-build-1</version>
+    <version>1.0.0</version>
     <title>
-        <en><![CDATA[Database Test]]></en>
-        <fr><![CDATA[Test Database]]></fr>
+        <en><![CDATA[DBAPI - Centralized Database]]></en>
+        <fr><![CDATA[DBAPI - Base de Donnees Centralisee]]></fr>
     </title>
     <description>
-        <en><![CDATA[This mod is a test for database functionality in Farming Simulator 25.]]></en>
-        <fr><![CDATA[Ce mod est un test pour la fonctionnalité de base de données dans Farming Simulator 25.]]></fr>
+        <en><![CDATA[Centralized database mod for FS25. Provides a global DBAPI API for other mods to store and retrieve persistent key-value data with namespace isolation.]]></en>
+        <fr><![CDATA[Mod de base de donnees centralisee pour FS25. Fournit une API globale DBAPI permettant aux autres mods de stocker et recuperer des donnees persistantes avec isolation par namespace.]]></fr>
     </description>
-    <iconFilename>images/icon_dbtest.dds</iconFilename>
-    <multiplayer supported="true" />
+    <iconFilename>images/icon_dbapi.dds</iconFilename>
+    <multiplayer supported="false" />
     <extraSourceFiles>
         <sourceFile filename="scripts/main.lua" />
     </extraSourceFiles>
