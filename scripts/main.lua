@@ -1,4 +1,4 @@
--- FS25_DBAPI - Centralized Database Manager
+-- FS25_DBAPI - Centralized Database Manager (ORM)
 -- Main entry point and Dependency Injection container.
 
 local MOD_NAME = g_currentModName
@@ -30,15 +30,15 @@ local function loadModule(name, path)
 
     _G.DBAPI_LOADER._temp = nil
     local result = source(fullPath)
-    
-    -- Si source() retourne nil (typique FS25), on récupère ce que le module a déposé dans _temp
+
+    -- Si source() retourne nil (typique FS25), on recupere ce que le module a depose dans _temp
     if result == nil then
         result = _G.DBAPI_LOADER._temp
     end
-    
+
     if result ~= nil then
         modules[name] = result
-        _G.DBAPI_LOADER._temp = nil -- Nettoyage après chaque chargement
+        _G.DBAPI_LOADER._temp = nil -- Nettoyage apres chaque chargement
         return result
     end
 
@@ -53,12 +53,18 @@ end
 local json             = loadModule("json",          "scripts/utils/json.lua")
 local FlatDB           = loadModule("flatdb",        "scripts/infrastructure/FlatDB.lua")
 local DatabaseAdapter  = loadModule("adapter",       "scripts/persistence/DatabaseAdapter.lua")
-local SetValue         = loadModule("setValue",       "scripts/usecases/SetValue.lua")
-local GetValue         = loadModule("getValue",       "scripts/usecases/GetValue.lua")
-local DeleteValue      = loadModule("deleteValue",    "scripts/usecases/DeleteValue.lua")
-local ListKeys         = loadModule("listKeys",       "scripts/usecases/ListKeys.lua")
 local ConsoleInterface = loadModule("console",      "scripts/interfaces/ConsoleInterface.lua")
 local buildGlobalAPI   = loadModule("globalAPI",     "scripts/interfaces/GlobalAPI.lua")
+
+-- ORM modules
+local ModelRepository  = loadModule("modelRepo",       "scripts/persistence/ModelRepository.lua")
+local SchemaValidator  = loadModule("schemaValidator",  "scripts/usecases/orm/SchemaValidator.lua")
+local QueryEngine      = loadModule("queryEngine",      "scripts/usecases/orm/QueryEngine.lua")
+local ModelRegistry    = loadModule("modelRegistry",    "scripts/usecases/orm/ModelRegistry.lua")
+local CreateRecord     = loadModule("createRecord",     "scripts/usecases/orm/CreateRecord.lua")
+local FindRecord       = loadModule("findRecord",       "scripts/usecases/orm/FindRecord.lua")
+local UpdateRecord     = loadModule("updateRecord",     "scripts/usecases/orm/UpdateRecord.lua")
+local DeleteRecord     = loadModule("deleteRecord",     "scripts/usecases/orm/DeleteRecord.lua")
 
 -- Nettoyage du loader temporaire
 _G.DBAPI_LOADER = nil
@@ -73,12 +79,16 @@ end
 -- =============================================================================
 
 local deps = {
-    adapter     = DatabaseAdapter,
-    setValue     = SetValue,
-    getValue     = GetValue,
-    deleteValue  = DeleteValue,
-    listKeys     = ListKeys,
-    json         = json,
+    adapter         = DatabaseAdapter,
+    json             = json,
+    modelRepo        = ModelRepository,
+    schemaValidator  = SchemaValidator,
+    queryEngine      = QueryEngine,
+    modelRegistry    = ModelRegistry,
+    createRecord     = CreateRecord,
+    findRecord       = FindRecord,
+    updateRecord     = UpdateRecord,
+    deleteRecord     = DeleteRecord,
 }
 
 -- =============================================================================
@@ -145,4 +155,4 @@ function DBAPI_Listener:deleteMap()
 end
 
 addModEventListener(DBAPI_Listener)
-print("DBAPI: Mod loaded (v1.0.0)")
+print("DBAPI: Mod loaded (v2.0.0)")
