@@ -11,7 +11,7 @@ local jsonDecode, jsonEncode
 --- Links the JSON engine to FlatDB.
 function FlatDB.linkJSON(json)
     if not json or not json.encode or not json.decode then
-        print("DBAPI Error: Invalid JSON module passed to FlatDB.linkJSON")
+        print("SILODB Error: Invalid JSON module passed to FlatDB.linkJSON")
         return
     end
     jsonEncode = json.encode
@@ -126,5 +126,5 @@ setmetatable(FlatDB, {
     end
 })
 
-if _G.DBAPI_LOADER then _G.DBAPI_LOADER._temp = FlatDB end
+if _G.SILODB_LOADER then _G.SILODB_LOADER._temp = FlatDB end
 return FlatDB

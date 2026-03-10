@@ -79,5 +79,5 @@ function FindRecord.count(deps, namespace, modelName, query)
     return #results
 end
 
-if _G.DBAPI_LOADER then _G.DBAPI_LOADER._temp = FindRecord end
+if _G.SILODB_LOADER then _G.SILODB_LOADER._temp = FindRecord end
 return FindRecord

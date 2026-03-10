@@ -3,14 +3,14 @@
     <author>LeGrizzly</author>
     <version>2.0.0</version>
     <title>
-        <en><![CDATA[DBAPI - Centralized Database]]></en>
-        <fr><![CDATA[DBAPI - Base de Donnees Centralisee]]></fr>
+        <en><![CDATA[SiloDB - Centralized Database]]></en>
+        <fr><![CDATA[SiloDB - Base de Donnees Centralisee]]></fr>
     </title>
     <description>
         <en><![CDATA[Centralized database mod for FS25. Provides an ORM API for other mods to define models and persist structured records with namespace isolation.]]></en>
         <fr><![CDATA[Mod de base de donnees centralisee pour FS25. Fournit une API ORM permettant aux autres mods de definir des modeles et persister des enregistrements structures avec isolation par namespace.]]></fr>
     </description>
-    <iconFilename>images/icon_dbapi.dds</iconFilename>
+    <iconFilename>images/icon_silodb.dds</iconFilename>
     <multiplayer supported="false" />
     <extraSourceFiles>
         <sourceFile filename="scripts/main.lua" />

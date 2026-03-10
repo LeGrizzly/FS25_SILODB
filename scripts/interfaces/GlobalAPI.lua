@@ -1,10 +1,10 @@
--- GlobalAPI - Public API exposed as _G.DBAPI for other mods
--- This is the ONLY file that touches _G.DBAPI.
+-- GlobalAPI - Public API exposed as _G.SILODB for other mods
+-- This is the ONLY file that touches _G.SILODB.
 -- All public methods validate inputs and delegate to use cases.
 
 --- Builds the public API table.
 --- @param deps table {adapter, modelRegistry, modelRepo, schemaValidator, ...}
---- @return table api The public _G.DBAPI API
+--- @return table api The public _G.SILODB API
 local function buildGlobalAPI(deps)
     local api = {}
 
@@ -31,7 +31,7 @@ local function buildGlobalAPI(deps)
     --- @return table instance Bound ORM instance with :define, :create, :find, etc.
     function api.bind(namespace)
         if not namespace or namespace == "" then
-            print("DBAPI Error: bind() requires a namespace")
+            print("SILODB Error: bind() requires a namespace")
             return nil
         end
 
@@ -127,5 +127,5 @@ local function buildGlobalAPI(deps)
     return api
 end
 
-if _G.DBAPI_LOADER then _G.DBAPI_LOADER._temp = buildGlobalAPI end
+if _G.SILODB_LOADER then _G.SILODB_LOADER._temp = buildGlobalAPI end
 return buildGlobalAPI

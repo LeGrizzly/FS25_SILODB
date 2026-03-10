@@ -1,4 +1,4 @@
--- ConsoleInterface - Registers developer console commands for DBAPI
+-- ConsoleInterface - Registers developer console commands for SILODB
 -- ORM Commands: dbDefine, dbCreate, dbFind, dbFindAll, dbUpdate, dbRemove, dbHelp
 
 local ConsoleInterface = {}
@@ -97,9 +97,9 @@ function ConsoleInterface:onDefine(namespace, model, ...)
         namespace, model, { fields = fields }
     )
     if schema then
-        print(string.format("DBAPI ORM: Model '%s' defined in [%s]", model, namespace))
+        print(string.format("SILODB ORM: Model '%s' defined in [%s]", model, namespace))
     else
-        print(string.format("DBAPI Error: %s", tostring(err)))
+        print(string.format("SILODB Error: %s", tostring(err)))
     end
 end
 
@@ -111,16 +111,16 @@ function ConsoleInterface:onCreate(namespace, model, ...)
     end
     local schema = ormDeps.modelRegistry.getSchema(namespace, model)
     if not schema then
-        print(string.format("DBAPI Error: model '%s' not defined in [%s]", model, namespace))
+        print(string.format("SILODB Error: model '%s' not defined in [%s]", model, namespace))
         return
     end
     local data = parseDataTokens(schema, ...)
     local record, err = ormDeps.createRecord(ormDeps, namespace, model, data)
     if record then
-        print(string.format("DBAPI ORM: Created %s #%d in [%s]", model, record.id, namespace))
+        print(string.format("SILODB ORM: Created %s #%d in [%s]", model, record.id, namespace))
         print("  " .. formatValue(record))
     else
-        print(string.format("DBAPI Error: %s", tostring(err)))
+        print(string.format("SILODB Error: %s", tostring(err)))
     end
 end
 
@@ -132,17 +132,17 @@ function ConsoleInterface:onFindById(namespace, model, id)
     end
     local numId = tonumber(id)
     if not numId then
-        print("DBAPI Error: id must be a number")
+        print("SILODB Error: id must be a number")
         return
     end
     local record, err = ormDeps.findRecord.findById(ormDeps, namespace, model, numId)
     if err then
-        print(string.format("DBAPI Error: %s", tostring(err)))
+        print(string.format("SILODB Error: %s", tostring(err)))
     elseif record then
-        print(string.format("DBAPI ORM: %s #%d in [%s]", model, numId, namespace))
+        print(string.format("SILODB ORM: %s #%d in [%s]", model, numId, namespace))
         print("  " .. formatValue(record))
     else
-        print(string.format("DBAPI ORM: %s #%d not found in [%s]", model, numId, namespace))
+        print(string.format("SILODB ORM: %s #%d not found in [%s]", model, numId, namespace))
     end
 end
 
@@ -154,10 +154,10 @@ function ConsoleInterface:onFindAll(namespace, model)
     end
     local results, err = ormDeps.findRecord.findAll(ormDeps, namespace, model)
     if err then
-        print(string.format("DBAPI Error: %s", tostring(err)))
+        print(string.format("SILODB Error: %s", tostring(err)))
         return
     end
-    print(string.format("DBAPI ORM: %d %s record(s) in [%s]", #results, model, namespace))
+    print(string.format("SILODB ORM: %d %s record(s) in [%s]", #results, model, namespace))
     for _, rec in ipairs(results) do
         print("  " .. formatValue(rec))
     end
@@ -171,21 +171,21 @@ function ConsoleInterface:onUpdate(namespace, model, id, ...)
     end
     local numId = tonumber(id)
     if not numId then
-        print("DBAPI Error: id must be a number")
+        print("SILODB Error: id must be a number")
         return
     end
     local schema = ormDeps.modelRegistry.getSchema(namespace, model)
     if not schema then
-        print(string.format("DBAPI Error: model '%s' not defined in [%s]", model, namespace))
+        print(string.format("SILODB Error: model '%s' not defined in [%s]", model, namespace))
         return
     end
     local data = parseDataTokens(schema, ...)
     local record, err = ormDeps.updateRecord(ormDeps, namespace, model, numId, data)
     if record then
-        print(string.format("DBAPI ORM: Updated %s #%d in [%s]", model, numId, namespace))
+        print(string.format("SILODB ORM: Updated %s #%d in [%s]", model, numId, namespace))
         print("  " .. formatValue(record))
     else
-        print(string.format("DBAPI Error: %s", tostring(err)))
+        print(string.format("SILODB Error: %s", tostring(err)))
     end
 end
 
@@ -197,20 +197,20 @@ function ConsoleInterface:onRemove(namespace, model, id)
     end
     local numId = tonumber(id)
     if not numId then
-        print("DBAPI Error: id must be a number")
+        print("SILODB Error: id must be a number")
         return
     end
     local ok, err = ormDeps.deleteRecord(ormDeps, namespace, model, numId)
     if ok then
-        print(string.format("DBAPI ORM: Deleted %s #%d from [%s]", model, numId, namespace))
+        print(string.format("SILODB ORM: Deleted %s #%d from [%s]", model, numId, namespace))
     else
-        print(string.format("DBAPI Error: %s", tostring(err)))
+        print(string.format("SILODB Error: %s", tostring(err)))
     end
 end
 
 --- Console handler: dbHelp
 function ConsoleInterface:onHelp()
-    print("--- DBAPI ORM Console Commands ---")
+    print("--- SILODB ORM Console Commands ---")
     print("  dbDefine <ns> <model> <field:type[:constraint]> ...")
     print("  dbCreate <ns> <model> <key=value> ...")
     print("  dbFind <ns> <model> <id>           Find record by ID")
@@ -231,7 +231,7 @@ function ConsoleInterface.register(deps)
     ormDeps = deps
 
     if addConsoleCommand == nil then
-        print("DBAPI Error: addConsoleCommand not available")
+        print("SILODB Error: addConsoleCommand not available")
         return
     end
 
@@ -241,11 +241,11 @@ function ConsoleInterface.register(deps)
     addConsoleCommand("dbFindAll", "List records: dbFindAll <ns> <model>", "onFindAll", ConsoleInterface)
     addConsoleCommand("dbUpdate", "Update record: dbUpdate <ns> <model> <id> <key=value> ...", "onUpdate", ConsoleInterface)
     addConsoleCommand("dbRemove", "Delete record: dbRemove <ns> <model> <id>", "onRemove", ConsoleInterface)
-    addConsoleCommand("dbHelp", "Show DBAPI help", "onHelp", ConsoleInterface)
+    addConsoleCommand("dbHelp", "Show SILODB help", "onHelp", ConsoleInterface)
 
     isRegistered = true
-    print("DBAPI: Console commands registered (dbDefine, dbCreate, dbFind, dbFindAll, dbUpdate, dbRemove, dbHelp)")
+    print("SILODB: Console commands registered (dbDefine, dbCreate, dbFind, dbFindAll, dbUpdate, dbRemove, dbHelp)")
 end
 
-if _G.DBAPI_LOADER then _G.DBAPI_LOADER._temp = ConsoleInterface end
+if _G.SILODB_LOADER then _G.SILODB_LOADER._temp = ConsoleInterface end
 return ConsoleInterface

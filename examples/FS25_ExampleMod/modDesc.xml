@@ -3,18 +3,18 @@
     <author>LeGrizzly</author>
     <version>1.0.0.0</version>
     <title>
-        <en>DBAPI Example Mod</en>
-        <fr>Exemple Mod DBAPI</fr>
+        <en>SILODB Example Mod</en>
+        <fr>Exemple Mod SILODB</fr>
     </title>
     <description>
-        <en>Demonstrates how to use the FS25_DBAPI centralized database.</en>
-        <fr>Démontre comment utiliser la base de données centralisée FS25_DBAPI.</fr>
+        <en>Demonstrates how to use the FS25_SILODB centralized database.</en>
+        <fr>Démontre comment utiliser la base de données centralisée FS25_SILODB.</fr>
     </description>
     <iconFilename>icon_mod.dds</iconFilename>
     <multiplayer supported="true" />
     
     <dependencies>
-        <dependency>FS25_DBAPI</dependency>
+        <dependency>FS25_SILODB</dependency>
     </dependencies>
 
     <extraSourceFiles>

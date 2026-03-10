@@ -36,5 +36,5 @@ local function CreateRecord(deps, namespace, modelName, data)
     return cleaned
 end
 
-if _G.DBAPI_LOADER then _G.DBAPI_LOADER._temp = CreateRecord end
+if _G.SILODB_LOADER then _G.SILODB_LOADER._temp = CreateRecord end
 return CreateRecord

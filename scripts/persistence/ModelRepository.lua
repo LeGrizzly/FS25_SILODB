@@ -93,5 +93,5 @@ function ModelRepository.saveSchema(adapter, namespace, modelName, schema)
     return adapter.set(pageName, "__schema", schema)
 end
 
-if _G.DBAPI_LOADER then _G.DBAPI_LOADER._temp = ModelRepository end
+if _G.SILODB_LOADER then _G.SILODB_LOADER._temp = ModelRepository end
 return ModelRepository

@@ -48,5 +48,5 @@ local function UpdateRecord(deps, namespace, modelName, id, data)
     return existing
 end
 
-if _G.DBAPI_LOADER then _G.DBAPI_LOADER._temp = UpdateRecord end
+if _G.SILODB_LOADER then _G.SILODB_LOADER._temp = UpdateRecord end
 return UpdateRecord

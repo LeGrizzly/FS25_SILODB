@@ -94,5 +94,5 @@ function SchemaValidator.validate(schema, data, isUpdate)
     return cleaned
 end
 
-if _G.DBAPI_LOADER then _G.DBAPI_LOADER._temp = SchemaValidator end
+if _G.SILODB_LOADER then _G.SILODB_LOADER._temp = SchemaValidator end
 return SchemaValidator

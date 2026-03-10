@@ -1,6 +1,6 @@
-# FS25_DBAPI - Centralized Database Manager
+# FS25_SILODB - Centralized Database Manager
 
-A centralized database mod for Farming Simulator 25 that provides a global `DBAPI` API for other mods to store and retrieve persistent key-value data.
+A centralized database mod for Farming Simulator 25 that provides a global `SILODB` API for other mods to store and retrieve persistent key-value data.
 
 ## Features
 
@@ -13,23 +13,23 @@ A centralized database mod for Farming Simulator 25 that provides a global `DBAP
 
 ## Quick Start (For Mod Developers)
 
-### Check if DBAPI is available
+### Check if SILODB is available
 
 ```xml
 <modDesc>
   <name>My Mod</name>
   <version>1.0.0</version>
   <author>LeGrizzly</author>
-  <description>A mod that uses FS25_DBAPI for data storage.</description>
+  <description>A mod that uses FS25_SILODB for data storage.</description>
   <dependencies>
-    <dependency name="FS25_DBAPI" />
+    <dependency name="FS25_SILODB" />
   </dependencies>
 </modDesc>
 ```
 
 ```lua
 -- Safe to use the API
-local DBAPI = g_globalMods["FS25_DBAPI"]
+local SILODB = g_globalMods["FS25_SILODB"]
 ```
 
 ### Store and retrieve data
@@ -38,18 +38,18 @@ local DBAPI = g_globalMods["FS25_DBAPI"]
 local ns = "FS25_MyMod"  -- Your mod name as namespace
 
 -- Store values
-DBAPI.setValue(ns, "playerScore", 42)
-DBAPI.setValue(ns, "settings", { difficulty = "hard", sound = true })
+SILODB.setValue(ns, "playerScore", 42)
+SILODB.setValue(ns, "settings", { difficulty = "hard", sound = true })
 
 -- Retrieve values
-local score = DBAPI.getValue(ns, "playerScore")  -- 42
-local settings = DBAPI.getValue(ns, "settings")   -- { difficulty = "hard", sound = true }
+local score = SILODB.getValue(ns, "playerScore")  -- 42
+local settings = SILODB.getValue(ns, "settings")   -- { difficulty = "hard", sound = true }
 
 -- Delete a key
-DBAPI.deleteValue(ns, "playerScore")
+SILODB.deleteValue(ns, "playerScore")
 
 -- List all keys in your namespace
-local keys = DBAPI.listKeys(ns)  -- { "settings" }
+local keys = SILODB.listKeys(ns)  -- { "settings" }
 ```
 
 ### Supported value types
@@ -78,7 +78,7 @@ Available in the developer console (`~` key):
 1. Download the latest release ZIP
 2. Place it in your FS25 mods folder (`Documents/My Games/FarmingSimulator2025/mods/`)
 3. Enable the mod in the game's mod manager
-4. Other mods can now use `local DBAPI = g_globalMods["FS25_DBAPI"]` after the map loads
+4. Other mods can now use `local SILODB = g_globalMods["FS25_SILODB"]` after the map loads
 
 ## Architecture
 
@@ -96,7 +96,7 @@ scripts/
     ListKeys.lua                 -- List business logic
   interfaces/
     ConsoleInterface.lua         -- Developer console commands
-    GlobalAPI.lua                -- Public _G.DBAPI API builder
+    GlobalAPI.lua                -- Public g_globalMods["FS25_SILODB"] API builder
   utils/json.lua                 -- JSON encoder/decoder
 ```
 

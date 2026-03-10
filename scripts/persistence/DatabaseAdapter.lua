@@ -12,11 +12,11 @@ local flatDBRef = nil
 --- @return boolean success
 local function ensureDirectory(path)
     if createFolder then
-        print("DBAPI [DIR]: ensureDirectory() calling createFolder: " .. tostring(path))
+        print("SILODB [DIR]: ensureDirectory() calling createFolder: " .. tostring(path))
         createFolder(path)
         return true
     end
-    print("DBAPI [DIR]: WARNING - createFolder is not available!")
+    print("SILODB [DIR]: WARNING - createFolder is not available!")
     return false
 end
 
@@ -27,15 +27,15 @@ function DatabaseAdapter.init(flatDB, path)
     if db then return end
 
     if not flatDB then
-        print("DBAPI Error: FlatDB module is required for DatabaseAdapter.init")
+        print("SILODB Error: FlatDB module is required for DatabaseAdapter.init")
         return
     end
 
-    dbPath = path or "modSaveData_DBAPI"
+    dbPath = path or "modSaveData_SILODB"
     flatDBRef = flatDB
     ensureDirectory(dbPath)
     db = flatDB(dbPath)
-    print("DBAPI: Database initialized at " .. tostring(dbPath))
+    print("SILODB: Database initialized at " .. tostring(dbPath))
 end
 
 --- Sets a value in a namespaced page.
@@ -75,7 +75,7 @@ end
 --- savegameDirectory to a tempsavegame folder during the save cycle.
 function DatabaseAdapter.save()
     if not db then
-        print("DBAPI [SAVE]: SKIPPED - db is nil")
+        print("SILODB [SAVE]: SKIPPED - db is nil")
         return
     end
 
@@ -83,15 +83,15 @@ function DatabaseAdapter.save()
     if g_currentMission
         and g_currentMission.missionInfo
         and g_currentMission.missionInfo.savegameDirectory then
-        savePath = g_currentMission.missionInfo.savegameDirectory .. "/DBAPI_data"
+        savePath = g_currentMission.missionInfo.savegameDirectory .. "/SILODB_data"
     end
 
     if not savePath then
-        print("DBAPI [SAVE]: SKIPPED - no save path available")
+        print("SILODB [SAVE]: SKIPPED - no save path available")
         return
     end
 
-    print("DBAPI [SAVE]: Saving to: " .. savePath .. " (dbPath was: " .. tostring(dbPath) .. ")")
+    print("SILODB [SAVE]: Saving to: " .. savePath .. " (dbPath was: " .. tostring(dbPath) .. ")")
     ensureDirectory(savePath)
 
     local originalPath = flatDBRef and flatDBRef.getPath(db) or nil
@@ -105,7 +105,7 @@ function DatabaseAdapter.save()
         flatDBRef.setPath(db, originalPath)
     end
 
-    print("DBAPI [SAVE]: db:save() completed at " .. savePath)
+    print("SILODB [SAVE]: db:save() completed at " .. savePath)
 end
 
 --- Returns true if the database is initialized.
@@ -114,5 +114,5 @@ function DatabaseAdapter.isReady()
     return db ~= nil
 end
 
-if _G.DBAPI_LOADER then _G.DBAPI_LOADER._temp = DatabaseAdapter end
+if _G.SILODB_LOADER then _G.SILODB_LOADER._temp = DatabaseAdapter end
 return DatabaseAdapter

@@ -93,5 +93,5 @@ function QueryEngine.execute(records, query)
     return results
 end
 
-if _G.DBAPI_LOADER then _G.DBAPI_LOADER._temp = QueryEngine end
+if _G.SILODB_LOADER then _G.SILODB_LOADER._temp = QueryEngine end
 return QueryEngine

@@ -25,5 +25,5 @@ local function DeleteRecord(deps, namespace, modelName, id)
     return deps.modelRepo.deleteRecord(deps.adapter, namespace, modelName, id)
 end
 
-if _G.DBAPI_LOADER then _G.DBAPI_LOADER._temp = DeleteRecord end
+if _G.SILODB_LOADER then _G.SILODB_LOADER._temp = DeleteRecord end
 return DeleteRecord

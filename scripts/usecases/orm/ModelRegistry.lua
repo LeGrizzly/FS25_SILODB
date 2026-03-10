@@ -75,5 +75,5 @@ function ModelRegistry.clearRegistry()
     registry = {}
 end
 
-if _G.DBAPI_LOADER then _G.DBAPI_LOADER._temp = ModelRegistry end
+if _G.SILODB_LOADER then _G.SILODB_LOADER._temp = ModelRegistry end
 return ModelRegistry

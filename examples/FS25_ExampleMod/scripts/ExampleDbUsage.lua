@@ -3,16 +3,16 @@ ExampleDbUsage = {}
 function ExampleDbUsage:loadMap(name)
     print("ExampleDbUsage: Chargement...")
 
-    local DBAPI = g_globalMods and g_globalMods["FS25_DBAPI"]
-    if not DBAPI or not DBAPI.isReady() then
-        print("ExampleDbUsage ERROR: DBAPI non disponible.")
+    local SILODB = g_globalMods and g_globalMods["FS25_SILODB"]
+    if not SILODB or not SILODB.isReady() then
+        print("ExampleDbUsage ERROR: SILODB non disponible.")
         return
     end
 
-    print("ExampleDbUsage: DBAPI v" .. DBAPI.getVersion() .. " pret.")
+    print("ExampleDbUsage: SILODB v" .. SILODB.getVersion() .. " pret.")
 
     -- Etape 1 : Lier le namespace et obtenir une instance ORM
-    local db = DBAPI.bind("FS25_ExampleMod")
+    local db = SILODB.bind("FS25_ExampleMod")
 
     -- Etape 2 : Definir un modele
     local schema, err = db:define("Player", {
